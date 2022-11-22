@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres
+    #죽으면 다시 살아날 수 있게함
+    restart: always
+    #실제포트와 연결..?!
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    #환경변수
+    environment:
+      POSTGRES_USER: "${DB_USER_ID}"
+      POSTGRES_PASSWORD: "${DB_USER_PASSWORD}"
