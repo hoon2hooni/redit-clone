@@ -9,6 +9,9 @@ import {
 } from "typeorm";
 import BaseEntity from "./Entity";
 import User from "./User";
+import Comment from "./Comment";
+import Vote from "./Vote";
+
 import Sub from "./Sub";
 import { Exclude, Expose } from "class-transformer";
 import { slugify, makeId } from "../utils/helper";

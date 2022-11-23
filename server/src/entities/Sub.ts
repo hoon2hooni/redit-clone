@@ -9,6 +9,8 @@ import {
 } from "typeorm";
 import BaseEntity from "./Entity";
 import User from "./User";
+import Post from "./Post";
+
 @Entity("subs")
 export default class Sub extends BaseEntity {
   @Index()
