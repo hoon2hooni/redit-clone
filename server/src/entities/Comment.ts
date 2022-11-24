@@ -1,10 +1,17 @@
 import BaseEntity from "./Entity";
 import { Exclude, Expose } from "class-transformer";
-import { Column, Index, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+import {
+  Column,
+  Index,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  Entity,
+} from "typeorm";
 import User from "./User";
 import Post from "./Post";
 import Vote from "./Vote";
-
+@Entity("comments")
 export default class Comment extends BaseEntity {
   @Index()
   @Column()
@@ -27,18 +34,17 @@ export default class Comment extends BaseEntity {
   post: Post;
 
   @Exclude()
-  @OneToMany(()=>Vote, (vote) => vote.comment)
+  @OneToMany(() => Vote, (vote) => vote.comment)
   votes: Vote[];
 
   protected userVote: number;
 
-  setUserVote(user:User) {
-    const index = this.votes?.findIndex(v => v.username === user.username);
+  setUserVote(user: User) {
+    const index = this.votes?.findIndex((v) => v.username === user.username);
     this.userVote = index > -1 ? this.votes[index].value : 0;
   }
 
   @Expose() get voteScore(): number {
     return this.votes?.reduce((prev, curr) => prev + (curr.value || 0), 0);
   }
-  
 }

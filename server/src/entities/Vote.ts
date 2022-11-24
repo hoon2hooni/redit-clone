@@ -16,8 +16,7 @@ export default class Vote extends BaseEntity {
   @Column()
   username: string;
 
-  @ManyToOne(() => Post, (post) => post.votes)
-  @JoinColumn({ name: "identifier", referencedColumnName: "identifier" })
+  @ManyToOne(() => Post)
   post: Post;
 
   @Column({ nullable: true })
@@ -26,8 +25,6 @@ export default class Vote extends BaseEntity {
   @Column()
   commentId: string;
 
-  @Column()
-  @ManyToOne(() => Comment, (comment) => comment.votes)
-  @JoinColumn({ name: "identifier", referencedColumnName: "identifier" })
+  @ManyToOne(() => Comment)
   comment: Comment;
 }

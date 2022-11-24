@@ -14,10 +14,10 @@ import Post from "./Post";
 @Entity("subs")
 export default class Sub extends BaseEntity {
   @Index()
-  @Column()
+  @Column({ unique: true })
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   title: string;
 
   @Column({ type: "text", nullable: true })

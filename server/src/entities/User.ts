@@ -1,16 +1,10 @@
 import { IsEmail, Length } from "class-validator";
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  BaseEntity,
-  Index,
-  OneToMany,
-  BeforeInsert,
-} from "typeorm";
+import { Entity, Column, Index, OneToMany, BeforeInsert } from "typeorm";
+import BaseEntity from "./Entity";
 
 import bcrypt from "bcryptjs";
-
+import Post from "./Post";
+import Vote from "./Vote";
 @Entity()
 export default class User extends BaseEntity {
   @Index()
@@ -21,7 +15,7 @@ export default class User extends BaseEntity {
 
   @Index()
   @Length(3, 32, { message: "Username too short" })
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column()
