@@ -1,7 +1,9 @@
-import { validate } from "class-validator";
+import { validate, isEmpty } from "class-validator";
 import { Router, Request, Response } from "express";
 import User from "../entities/User";
-
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import cookie from "cookie";
 const register = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
   try {
@@ -33,6 +35,41 @@ const register = async (req: Request, res: Response) => {
     }
     await user.save();
     return res.json(user);
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
+const login = async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+  try {
+    let errors: any = {};
+    if (isEmpty(username))
+      errors.username = "사용자 이름은 비워둘 수 없습니다.";
+    if (isEmpty(password)) errors.password = "비밀번호는 비워둘 수 없습니다.";
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json(errors);
+    }
+
+    //db에서 유저 찾기
+    const user = await User.findOneBy({ username });
+    if (!user)
+      return res
+        .status(404)
+        .json({ username: "해당 유저가 존재하지 않습니다." });
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch)
+      return res.status(401).json({ password: "비밀번호가 잘못되었습니다." });
+
+    //비밀번호가 맞다면 토큰 생성
+    const token = jwt.sign({ username }, process.env.JWT_SECRET);
+
+    //쿠키저장
+    res.set("Set-Cookie", cookie.serialize("token", token));
+    return res.json({ user, token });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json(error);
