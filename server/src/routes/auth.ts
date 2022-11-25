@@ -68,7 +68,16 @@ const login = async (req: Request, res: Response) => {
     const token = jwt.sign({ username }, process.env.JWT_SECRET);
 
     //쿠키저장
-    res.set("Set-Cookie", cookie.serialize("token", token));
+    res.set(
+      "Set-Cookie",
+      cookie.serialize("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7, //1주일
+        path: "/",
+      })
+    );
     return res.json({ user, token });
   } catch (error: any) {
     console.log(error);
@@ -78,5 +87,6 @@ const login = async (req: Request, res: Response) => {
 
 const router = Router();
 router.post("/register", register);
+router.post("/login", login);
 
 export default router;
