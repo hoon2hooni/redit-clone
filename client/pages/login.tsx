@@ -1,27 +1,30 @@
 import React, { FormEvent, useState } from "react";
-import InputGroup from "../components/InputGroup";
+import InputGroup from "@components/InputGroup";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { useAuthDispatch } from "@contexts/Auth";
+import { User } from "@types";
 
 const Login = () => {
   let router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
+  const dispatch = useAuthDispatch();
 
   // if (authenticated) router.push("/");
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      const res = await axios.post(
+      const res = await axios.post<{ user: User }>(
         "/auth/login",
         { password, username },
         { withCredentials: true }
       );
 
-      // dispatch("LOGIN", res.data?.user);
+      dispatch({ type: "LOGIN", payload: res.data.user });
 
       router.push("/");
     } catch (error: any) {
