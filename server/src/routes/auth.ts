@@ -4,7 +4,7 @@ import User from "../entities/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
-const register = async (req: Request, res: Response) => {
+  const register = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
   try {
     let errors: any = {};
