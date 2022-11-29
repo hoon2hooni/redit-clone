@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../entities/User";
-//TODO 400과 401에러 코드 차이 알아보기
+
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.token;

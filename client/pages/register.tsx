@@ -3,15 +3,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FormEvent, useState } from "react";
 import InputGroup from "../components/InputGroup";
+import { useAuthState } from "@contexts/Auth";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<any>({});
+  const { authenticated } = useAuthState();
 
   let router = useRouter();
 
+  if (authenticated) router.push("/");
+  
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {

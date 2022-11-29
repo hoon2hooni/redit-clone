@@ -4,7 +4,10 @@ import User from "../entities/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
-  const register = async (req: Request, res: Response) => {
+import userMiddleware from "../middlewares/user";
+import authMiddleware from "../middlewares/auth";
+
+const register = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
   try {
     let errors: any = {};
@@ -85,7 +88,13 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
+const me = async (_: Request, res: Response) => {
+  return res.json(res.locals.user);
+};
+
 const router = Router();
+
+router.get("/me", userMiddleware, authMiddleware, me);
 router.post("/register", register);
 router.post("/login", login);
 

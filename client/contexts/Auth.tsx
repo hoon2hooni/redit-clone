@@ -1,14 +1,21 @@
-import React, { createContext, ReactNode, Dispatch, useContext } from "react";
+import axios from "axios";
+import React, {
+  createContext,
+  ReactNode,
+  Dispatch,
+  useContext,
+  useEffect,
+} from "react";
 import { User, UserAction } from "../types";
 
 interface State {
-  authenticate?: boolean;
+  authenticated?: boolean;
   user?: User;
   loading: boolean;
 }
 
 export const StateContext = createContext<State>({
-  authenticate: false,
+  authenticated: false,
   loading: true,
 });
 
@@ -19,14 +26,14 @@ const reducer = (state: State, action: UserAction): State => {
     case "LOGIN":
       return {
         ...state,
-        authenticate: true,
+        authenticated: true,
         user: action.payload,
         loading: false,
       };
     case "LOGOUT":
       return {
         ...state,
-        authenticate: false,
+        authenticated: false,
         user: undefined,
         loading: false,
       };
@@ -44,6 +51,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userState, dispatch] = React.useReducer(reducer, {
     loading: false,
   });
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const res = await axios("/auth/me");
+        const { user } = await res.data;
+        dispatch({ type: "LOGIN", payload: user });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        dispatch({ type: "STOP_LOADING" });
+      }
+    }
+    loadUser();
+  }, []);
   return (
     <StateContext.Provider value={userState}>
       <DispatchContext.Provider value={dispatch}>
